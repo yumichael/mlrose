@@ -6,7 +6,6 @@ import networkx as nx
 class MaxKColorGenerator:
     @staticmethod
     def generate(seed, number_of_nodes=20, max_connections_per_node=4, max_colors=None, maximize=False):
-
         """
         >>> edges = [(0, 1), (0, 2), (0, 4), (1, 3), (2, 0), (2, 3), (3, 4)]
         >>> fitness = mlrose_hiive.MaxKColor(edges)
@@ -20,8 +19,7 @@ class MaxKColorGenerator:
         node_connections = {}
         nodes = range(number_of_nodes)
         for n in nodes:
-            all_other_valid_nodes = [o for o in nodes if (o != n and (o not in node_connections or
-                                                                      n not in node_connections[o]))]
+            all_other_valid_nodes = [o for o in nodes if o != n]
             count = min(node_connection_counts[n], len(all_other_valid_nodes))
             other_nodes = sorted(np.random.choice(all_other_valid_nodes, count, replace=False))
             node_connections[n] = [(n, o) for o in other_nodes]
@@ -39,5 +37,7 @@ class MaxKColorGenerator:
                     break
 
         edges = [(s, f) for (s, f) in g.edges()]
-        problem = MaxKColorOpt(edges=edges, length=number_of_nodes, maximize=maximize, max_colors=max_colors, source_graph=g)
+        problem = MaxKColorOpt(
+            edges=edges, length=number_of_nodes, maximize=maximize, max_colors=max_colors, source_graph=g
+        )
         return problem
