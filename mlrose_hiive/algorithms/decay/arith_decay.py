@@ -1,6 +1,5 @@
 """ Classes for defining decay schedules for simulated annealing."""
 
-
 # Author: Genevieve Hayes
 # License: BSD 3 clause
 
@@ -90,19 +89,19 @@ class ArithDecay:
             info[f'{prefix}current_value'] = self.evaluate(t)
         return info
 
-    def __str__(self):
-        return str(self.init_temp)
-
     def __repr__(self):
-        return f'{self.__class__.__name__}(init_temp={self.init_temp}, ' \
-               f'decay={self.decay}, min_temp={self.min_temp})'
+        return (
+            f'{self.__class__.__name__}(init_temp={self.init_temp}, ' f'decay={self.decay}, min_temp={self.min_temp})'
+        )
 
     def __eq__(self, other):
         try:
 
-            return (self.__class__.__name__ == other.__class__.__name__ and
-                    self.init_temp == other.init_temp and
-                    self.decay == other.decay and
-                    self.min_temp == other.min_temp)
+            return (
+                self.__class__.__name__ == other.__class__.__name__
+                and self.init_temp == other.init_temp
+                and self.decay == other.decay
+                and self.min_temp == other.min_temp
+            )
         except:
             return False

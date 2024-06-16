@@ -72,7 +72,7 @@ class ExpDecay:
             Temperature parameter at time t.
         """
 
-        temp = self.init_temp*np.exp(-1.0*self.exp_const*t)
+        temp = self.init_temp * np.exp(-1.0 * self.exp_const * t)
 
         if temp < self.min_temp:
             temp = self.min_temp
@@ -91,19 +91,20 @@ class ExpDecay:
             info[f'{prefix}current_value'] = self.evaluate(t)
         return info
 
-    def __str__(self):
-        return str(self.init_temp)
-
     def __repr__(self):
-        return f'{self.__class__.__name__}(init_temp={self.init_temp}, ' \
-               f'exp_const={self.exp_const}, min_temp={self.min_temp})'
+        return (
+            f'{self.__class__.__name__}(init_temp={self.init_temp}, '
+            f'exp_const={self.exp_const}, min_temp={self.min_temp})'
+        )
 
     def __eq__(self, other):
         try:
 
-            return (self.__class__.__name__ == other.__class__.__name__ and
-                    self.init_temp == other.init_temp and
-                    self.exp_const == other.exp_const and
-                    self.min_temp == other.min_temp)
+            return (
+                self.__class__.__name__ == other.__class__.__name__
+                and self.init_temp == other.init_temp
+                and self.exp_const == other.exp_const
+                and self.min_temp == other.min_temp
+            )
         except:
             return False
