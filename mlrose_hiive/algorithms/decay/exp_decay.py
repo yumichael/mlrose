@@ -91,6 +91,9 @@ class ExpDecay:
             info[f'{prefix}current_value'] = self.evaluate(t)
         return info
 
+    def __hash__(self):
+        return hash(self.__repr__())
+
     def __repr__(self):
         return (
             f'{self.__class__.__name__}(init_temp={self.init_temp}, '
