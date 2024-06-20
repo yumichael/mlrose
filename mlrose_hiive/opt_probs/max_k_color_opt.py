@@ -14,8 +14,17 @@ import networkx as nx
 
 
 class MaxKColorOpt(DiscreteOpt):
-    def __init__(self, edges=None, length=None, fitness_fn=None, maximize=False,
-                 max_colors=None, crossover=None, mutator=None, source_graph=None):
+    def __init__(
+        self,
+        edges=None,
+        length=None,
+        fitness_fn=None,
+        maximize=False,
+        max_colors=None,
+        crossover=None,
+        mutator=None,
+        source_graph=None,
+    ):
 
         if (fitness_fn is None) and (edges is None):
             raise Exception("fitness_fn or edges must be specified.")
@@ -39,7 +48,7 @@ class MaxKColorOpt(DiscreteOpt):
         else:
             self.source_graph = source_graph
 
-        self.stop_fitness = self.source_graph.number_of_edges() if maximize else 0
+        self.stop_fitness = None  # self.source_graph.number_of_edges() if maximize else 0
 
         fitness_fn.set_graph(self.source_graph)
         # if none is provided, make a reasonable starting guess.
@@ -60,4 +69,4 @@ class MaxKColorOpt(DiscreteOpt):
         self.set_state(state)
 
     def can_stop(self):
-        return int(self.get_fitness()) == self.stop_fitness
+        return False  # int(self.get_fitness()) == self.stop_fitness
