@@ -10,9 +10,18 @@ from mlrose_hiive.decorators import short_name
 
 
 @short_name('rhc')
-def random_hill_climb(problem, max_attempts=10, max_iters=np.inf, restarts=0,
-                      init_state=None, curve=False, random_state=None,
-                      state_fitness_callback=None, callback_user_info=None):
+def random_hill_climb(
+    problem,
+    max_attempts=10,
+    max_iters=np.inf,
+    restarts=0,
+    climb_same_fitness=False,
+    init_state=None,
+    curve=False,
+    random_state=None,
+    state_fitness_callback=None,
+    callback_user_info=None,
+):
     """Use randomized hill climbing to find the optimum for a given
     optimization problem.
     Parameters
@@ -63,16 +72,13 @@ def random_hill_climb(problem, max_attempts=10, max_iters=np.inf, restarts=0,
     Brownlee, J (2011). *Clever Algorithms: Nature-Inspired Programming
     Recipes*. `<http://www.cleveralgorithms.com>`_.
     """
-    if (not isinstance(max_attempts, int) and not max_attempts.is_integer()) \
-            or (max_attempts < 0):
+    if (not isinstance(max_attempts, int) and not max_attempts.is_integer()) or (max_attempts < 0):
         raise Exception("""max_attempts must be a positive integer.""")
 
-    if (not isinstance(max_iters, int) and max_iters != np.inf
-        and not max_iters.is_integer()) or (max_iters < 0):
+    if (not isinstance(max_iters, int) and max_iters != np.inf and not max_iters.is_integer()) or (max_iters < 0):
         raise Exception("""max_iters must be a positive integer.""")
 
-    if (not isinstance(restarts, int) and not restarts.is_integer()) \
-            or (restarts < 0):
+    if (not isinstance(restarts, int) and not restarts.is_integer()) or (restarts < 0):
         raise Exception("""restarts must be a positive integer.""")
 
     if init_state is not None and len(init_state) != problem.get_length():
@@ -104,11 +110,13 @@ def random_hill_climb(problem, max_attempts=10, max_iters=np.inf, restarts=0,
         if state_fitness_callback is not None:
             callback_extra_data = callback_user_info + [('current_restart', current_restart)]
             # initial call with base data
-            state_fitness_callback(iteration=0,
-                                   state=problem.get_state(),
-                                   fitness=problem.get_adjusted_fitness(),
-                                   fitness_evaluations=problem.fitness_evaluations,
-                                   user_data=callback_extra_data)
+            state_fitness_callback(
+                iteration=0,
+                state=problem.get_state(),
+                fitness=problem.get_adjusted_fitness(),
+                fitness_evaluations=problem.fitness_evaluations,
+                user_data=callback_extra_data,
+            )
 
         attempts = 0
         iters = 0
@@ -123,7 +131,7 @@ def random_hill_climb(problem, max_attempts=10, max_iters=np.inf, restarts=0,
             # If best neighbor is an improvement,
             # move to that state and reset attempts counter
             current_fitness = problem.get_fitness()
-            if next_fitness > current_fitness:
+            if next_fitness > current_fitness or next_fitness == current_fitness and climb_same_fitness:
                 problem.set_state(next_state)
                 attempts = 0
             else:
@@ -142,14 +150,16 @@ def random_hill_climb(problem, max_attempts=10, max_iters=np.inf, restarts=0,
             # invoke callback
             if state_fitness_callback is not None:
                 max_attempts_reached = (attempts == max_attempts) or (iters == max_iters) or problem.can_stop()
-                continue_iterating = state_fitness_callback(iteration=iters,
-                                                            attempt=attempts + 1,
-                                                            done=max_attempts_reached,
-                                                            state=problem.get_state(),
-                                                            fitness=problem.get_adjusted_fitness(),
-                                                            fitness_evaluations=problem.fitness_evaluations,
-                                                            curve=np.asarray(all_curves) if curve else None,
-                                                            user_data=callback_extra_data)
+                continue_iterating = state_fitness_callback(
+                    iteration=iters,
+                    attempt=attempts + 1,
+                    done=max_attempts_reached,
+                    state=problem.get_state(),
+                    fitness=problem.get_adjusted_fitness(),
+                    fitness_evaluations=problem.fitness_evaluations,
+                    curve=np.asarray(all_curves) if curve else None,
+                    user_data=callback_extra_data,
+                )
                 # break out if requested
                 if not continue_iterating:
                     break
